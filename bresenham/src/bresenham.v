@@ -57,10 +57,10 @@ module bresenham(
    reg signed       [P_Y_COORD_W-1:0] y, y0, y1;
    reg signed       [P_X_COORD_W-1:0] x_vals     [P_MAX_LINE_LENGTH-1:0];
    reg signed       [P_Y_COORD_W-1:0] y_vals     [P_MAX_LINE_LENGTH-1:0];
-   reg signed       [P_X_COORD_W-1:0] x_vals_reg [P_MAX_LINE_LENGTH-1:0];
-   reg signed       [P_Y_COORD_W-1:0] y_vals_reg [P_MAX_LINE_LENGTH-1:0];
+   //reg signed       [P_X_COORD_W-1:0] x_vals_reg [P_MAX_LINE_LENGTH-1:0];
+   //reg signed       [P_Y_COORD_W-1:0] y_vals_reg [P_MAX_LINE_LENGTH-1:0];
    reg        [P_MAX_LINE_LENGTH-1:0] vals_valid;
-   reg        [P_MAX_LINE_LENGTH-1:0] vals_valid_reg;
+   //reg        [P_MAX_LINE_LENGTH-1:0] vals_valid_reg;
    reg signed [P_MAX_LINE_LENGTH-1:0] delta_x, delta_y, error;
    reg signed                   [1:0] ystep;
    reg                                vals_rdy;
@@ -73,12 +73,12 @@ module bresenham(
    genvar j;
    generate
       for (j=0; j<P_MAX_LINE_LENGTH; j=j+1) begin : OUTPUT_GEN
-         assign o_x_vals[(j+1)*P_X_COORD_W-1:j*P_X_COORD_W] = x_vals_reg[j];
-         assign o_y_vals[(j+1)*P_Y_COORD_W-1:j*P_Y_COORD_W] = y_vals_reg[j];
+         assign o_x_vals[(j+1)*P_X_COORD_W-1:j*P_X_COORD_W] = x_vals[j];//x_vals_reg[j];
+         assign o_y_vals[(j+1)*P_Y_COORD_W-1:j*P_Y_COORD_W] = y_vals[j];//y_vals_reg[j];
       end
    endgenerate
    
-   assign o_vals_valid = vals_valid_reg;
+   assign o_vals_valid = vals_valid;//vals_valid_reg;
    assign o_vals_rdy   = vals_rdy;
 
    always @(posedge i_clk)
@@ -92,7 +92,7 @@ module bresenham(
          y1             <= 'b0;
          error          <= 'b0;
          vals_valid     <= 'b0;
-         vals_valid_reg <= 'b0;
+         //vals_valid_reg <= 'b0;
          vals_counter   <= 'b0;
          line_length    <= 'b0;
          curr_state     <= STATE__WAITING;
@@ -104,7 +104,7 @@ module bresenham(
          y1             <= y1;
          error          <= error;
          vals_valid     <= vals_valid;
-         vals_valid_reg <= vals_valid_reg;
+         //vals_valid_reg <= vals_valid_reg;
          vals_counter   <= vals_counter;
          curr_state     <= next_state;
          line_length    <= line_length;
@@ -202,7 +202,8 @@ module bresenham(
                
                if (x==x1) begin
                   vals_rdy       <= 1;
-                  vals_valid_reg <= 'b0;
+                  //vals_valid_reg <= 'b0;
+                  /*
                   for(i=0; i < P_MAX_LINE_LENGTH; i=i+1) begin
                      x_vals_reg[i]     <= x_vals[i];
                      y_vals_reg[i]     <= y_vals[i];
@@ -217,6 +218,7 @@ module bresenham(
                      y_vals_reg[vals_counter]     <= y;
                      vals_valid_reg[vals_counter] <= 1;
                   end
+                  */
                end
             end
          endcase
