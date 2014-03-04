@@ -38,9 +38,6 @@ module line_logic(
       if (i_vals_valid) begin
          if ((i_hcount >= i_x_val) && (i_hcount <= i_x_val+P_SCALE) && 
              (i_vcount >= i_y_val) && (i_vcount <= i_y_val+P_SCALE)) begin
-         //if ((i_hcount == i_x_val) && (i_vcount == i_y_val)) begin
-         //if (((i_hcount >= i_x_val) || (i_hcount <= i_x_val+P_SCALE)) &&
-         //    ((i_vcount >= i_y_val) || (i_vcount <= i_y_val+P_SCALE))) begin
             pixel_on = 1'b1;
          end
       end
