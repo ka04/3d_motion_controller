@@ -34,6 +34,7 @@ module draw_lines(
       output                                     o_pixel_on
     );
     
+    // Parameter
     parameter P_X_COORD_W = 11;
     parameter P_Y_COORD_W = 11;
     parameter P_SCREEN_W = 640;
@@ -41,38 +42,48 @@ module draw_lines(
     parameter P_DATA_W = 1;
     parameter P_LOG2_RAM_DEPTH = 19;
     
+    // Local parameter
     localparam STATE__WAITING = 0;
     localparam STATE__CLEAR   = 1;
     localparam STATE__LOAD    = 2;
     localparam STATE__DRAW    = 3;
     
+    // State registers
     reg [1:0] curr_state;
     reg [1:0] next_state;
     
+    // Screen buffer control and data signals
     wire [P_LOG2_RAM_DEPTH-1:0] clear_addr;
     wire [P_LOG2_RAM_DEPTH-1:0] bres_addr;
-    reg [P_LOG2_RAM_DEPTH-1:0] buffer_addr;
-    
+    reg  [P_LOG2_RAM_DEPTH-1:0] buffer_addr;
     wire clear_wr;
     wire bres_wr;
-    reg buffer_wr;
-    
+    reg  buffer_wr;
     wire [P_DATA_W-1:0] clear_data;
     wire [P_DATA_W-1:0] bres_data;
-    reg [P_DATA_W-1:0] buffer_data;
+    reg  [P_DATA_W-1:0] buffer_data;
     
+    // Bresenham control signals
     wire bres_waiting;
     wire load_vals;
     
+    // Bresenham coordinates
     wire     [P_X_COORD_W-1:0] x_val;
     wire     [P_Y_COORD_W-1:0] y_val;
     
+    // Counter reset signal
     wire counter_reset;
-    wire fifo_empty;
     
-    assign fifo_empty = 1'b1;
+    // FIFO control signals
+    wire fifo_empty;
+    assign fifo_empty = 1'b1; // place holder until FIFO is implemented
+    
+    // Generate output waiting status signal
     assign o_waiting  = (curr_state == STATE__WAITING) ? 1'b1 : 1'b0;
     
+    ///////////////////////////
+    // Control state machine //
+    ///////////////////////////
     // Change state
     always @(posedge i_clk) 
     begin
@@ -133,6 +144,8 @@ module draw_lines(
    ///////////////////
    // Screen buffer //
    ///////////////////
+   // Implement screen buffer in dual port RAM
+   //   One port used by VGA interface, one port used by Bresenham and clear
    dp_ram #(
       .P_DATA_W(P_DATA_W),
       .P_LOG2_RAM_DEPTH(P_LOG2_RAM_DEPTH)
@@ -148,7 +161,8 @@ module draw_lines(
          .i_b_data(0),
          .o_b_data(o_pixel_on)
     );
-    
+   
+   // Generate RAM control signals   
    assign bres_addr  = P_SCREEN_W*y_val+x_val;
    assign bres_data  = 1;
    assign clear_wr   = (curr_state == STATE__CLEAR) ? 1'b1 : 1'b0;
@@ -177,11 +191,8 @@ module draw_lines(
          end
       endcase
    end
-   
-   //////////////////
-   // Clear buffer //
-   //////////////////
-   // Counter for address
+
+   // Counter for clear address
    counter #(.P_COUNT_W(P_LOG2_RAM_DEPTH)) 
       counter (
          .i_clk(i_clk),
@@ -189,6 +200,7 @@ module draw_lines(
          .o_count(clear_addr)
 	);
    
+   // Reset the counter when not in clear state
    assign counter_reset = i_reset | ((curr_state == STATE__CLEAR) ? 1'b0 : 1'b1);
 
 endmodule
