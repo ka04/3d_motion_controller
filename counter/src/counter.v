@@ -19,7 +19,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module counter(
-    input i_clk,
+    input                  i_clk,
+    input                  i_reset,
     output [P_COUNT_W-1:0] o_count
     );
    parameter P_COUNT_W = 16;
@@ -28,7 +29,11 @@ module counter(
    
    always @(posedge i_clk)
    begin
-      count <= count + 1;
+      if (i_reset) begin
+         count <= 0;
+      end else begin
+         count <= count + 1;
+      end
    end
 
    assign o_count = count;
