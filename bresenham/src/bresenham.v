@@ -26,10 +26,12 @@ module bresenham(
       input                    [P_Y_COORD_W-1:0] i_y0,
       input                    [P_Y_COORD_W-1:0] i_y1,
       input                                      i_load_vals,
-      output [P_MAX_LINE_LENGTH*P_X_COORD_W-1:0] o_x_vals, //[P_MAX_LINE_LENGTH-1:0],
-      output [P_MAX_LINE_LENGTH*P_Y_COORD_W-1:0] o_y_vals, //[P_MAX_LINE_LENGTH-1:0],
-      output             [P_MAX_LINE_LENGTH-1:0] o_vals_valid,
-      output                                     o_vals_rdy
+      output reg [P_X_COORD_W-1:0] o_x_val,//[P_MAX_LINE_LENGTH*P_X_COORD_W-1:0] o_x_vals, //[P_MAX_LINE_LENGTH-1:0],
+      output reg [P_Y_COORD_W-1:0] o_y_val,//[P_MAX_LINE_LENGTH*P_Y_COORD_W-1:0] o_y_vals, //[P_MAX_LINE_LENGTH-1:0],
+      //output             [P_MAX_LINE_LENGTH-1:0] o_vals_valid,
+      //output       [log2(P_MAX_LINE_LENGTH)-1:0] o_vals_counter,
+      output                                     o_vals_rdy,
+      output                                     o_waiting
     );
     
    function integer log2;
@@ -43,8 +45,9 @@ module bresenham(
    
    parameter  P_MAX_LINE_LENGTH = 10;
    parameter  P_X_COORD_W       = 11;
-   parameter  P_Y_COORD_W       = 10;
+   parameter  P_Y_COORD_W       = 11;
    localparam P_LINE_LENGTH_W   = log2(P_MAX_LINE_LENGTH);//(P_X_COORD_W > P_Y_COORD_W) ? P_X_COORD_W : P_Y_COORD_W;
+   localparam P_ERROR_W         = (P_X_COORD_W>P_Y_COORD_W) ? P_X_COORD_W : P_Y_COORD_W;
    
    localparam STATE__WAITING              = 0;
    localparam STATE__SETUP_IS_STEEP       = 1;
@@ -61,15 +64,19 @@ module bresenham(
    //reg signed       [P_Y_COORD_W-1:0] y_vals_reg [P_MAX_LINE_LENGTH-1:0];
    reg        [P_MAX_LINE_LENGTH-1:0] vals_valid;
    //reg        [P_MAX_LINE_LENGTH-1:0] vals_valid_reg;
-   reg signed [P_MAX_LINE_LENGTH-1:0] delta_x, delta_y, error;
+   reg signed [P_X_COORD_W-1:0] delta_x;
+   reg signed [P_X_COORD_W-1:0] delta_y;
+   reg signed [P_ERROR_W-1:0] error;
    reg signed                   [1:0] ystep;
    reg                                vals_rdy;
+   reg                                waiting;
    reg        [log2(P_MAX_LINE_LENGTH)-1:0] vals_counter;
    reg                                steep;
    reg          [P_LINE_LENGTH_W-1:0] line_length;
    
    integer i;
    
+   /*
    genvar j;
    generate
       for (j=0; j<P_MAX_LINE_LENGTH; j=j+1) begin : OUTPUT_GEN
@@ -77,9 +84,11 @@ module bresenham(
          assign o_y_vals[(j+1)*P_Y_COORD_W-1:j*P_Y_COORD_W] = y_vals[j];//y_vals_reg[j];
       end
    endgenerate
-   
-   assign o_vals_valid = vals_valid;//vals_valid_reg;
+   */
+   //assign o_vals_valid = vals_valid;//vals_valid_reg;
    assign o_vals_rdy   = vals_rdy;
+   //assign o_vals_counter = vals_counter;
+   assign o_waiting    = (curr_state == STATE__WAITING) ? 1'b1 : 1'b0;
 
    always @(posedge i_clk)
    begin
@@ -104,6 +113,7 @@ module bresenham(
          y1             <= y1;
          error          <= error;
          vals_valid     <= vals_valid;
+         //waiting      <= 1'b0;
          //vals_valid_reg <= vals_valid_reg;
          vals_counter   <= vals_counter;
          curr_state     <= next_state;
@@ -182,14 +192,18 @@ module bresenham(
             end
             STATE__DRAWING : begin
                if (steep) begin
-                  x_vals[vals_counter] <= y;
-                  y_vals[vals_counter] <= x;
+                  //x_vals[vals_counter] <= y;
+                  //y_vals[vals_counter] <= x;
+                  o_x_val <= y;
+                  o_y_val <= x;
                end else begin
-                  x_vals[vals_counter] <= x;
-                  y_vals[vals_counter] <= y;
+                  //x_vals[vals_counter] <= x;
+                  //y_vals[vals_counter] <= y;
+                  o_x_val <= x;
+                  o_y_val <= y;
                end
                
-               vals_valid[vals_counter] <= 1;
+               //vals_valid[vals_counter] <= 1;
                vals_counter             <= vals_counter+1;
                x                        <= x+1;
                
@@ -200,8 +214,11 @@ module bresenham(
                   error <= error-delta_y;
                end
                
+               vals_rdy <= 1;
+               
                if (x==x1) begin
-                  vals_rdy       <= 1;
+                  //waiting <= 1'b1;
+                  //vals_rdy       <= 1;
                   //vals_valid_reg <= 'b0;
                   /*
                   for(i=0; i < P_MAX_LINE_LENGTH; i=i+1) begin

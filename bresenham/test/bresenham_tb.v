@@ -24,10 +24,19 @@
 
 module bresenham_tb;
 
+   function integer log2;
+      input [31:0] value;
+      begin
+	 value = value-1;
+	 for (log2=0; value>0; log2=log2+1)
+	   value = value>>1;
+      end
+   endfunction
+
    localparam P_PERIOD = 10;
    localparam P_MAX_LINE_LENGTH = 10;
    localparam P_X_COORD_W = 11;
-   localparam P_Y_COORD_W = 10;
+   localparam P_Y_COORD_W = 11;
 
 	// Inputs
 	reg i_clk;
@@ -39,10 +48,12 @@ module bresenham_tb;
 	reg i_load_vals;
 
 	// Outputs
-	wire [P_MAX_LINE_LENGTH*P_X_COORD_W-1:0] o_x_vals;
-	wire [P_MAX_LINE_LENGTH*P_Y_COORD_W-1:0] o_y_vals;
+	wire [P_X_COORD_W-1:0] o_x_val;//[P_MAX_LINE_LENGTH*P_X_COORD_W-1:0] o_x_vals;
+	wire [P_Y_COORD_W-1:0] o_y_val;//[P_MAX_LINE_LENGTH*P_Y_COORD_W-1:0] o_y_vals;
 	wire [P_MAX_LINE_LENGTH-1:0] o_vals_valid;
+   wire [log2(P_MAX_LINE_LENGTH)-1:0] o_vals_counter;
 	wire o_vals_rdy;
+   wire o_waiting;
 
 	// Instantiate the Unit Under Test (UUT)
 	bresenham uut (
@@ -53,10 +64,14 @@ module bresenham_tb;
 		.i_y0(i_y0), 
 		.i_y1(i_y1), 
 		.i_load_vals(i_load_vals), 
-		.o_x_vals(o_x_vals), 
-		.o_y_vals(o_y_vals), 
+		//.o_x_vals(o_x_vals), 
+		//.o_y_vals(o_y_vals), 
+      .o_x_val(o_x_val),
+      .o_y_val(o_y_val),
 		.o_vals_valid(o_vals_valid), 
-		.o_vals_rdy(o_vals_rdy)
+      .o_vals_counter(o_vals_counter),
+		.o_vals_rdy(o_vals_rdy),
+      .o_waiting(o_waiting)
 	);
 
    initial begin
