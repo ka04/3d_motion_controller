@@ -82,6 +82,20 @@ module draw_lines_top(
 		.o_pulse(btnu_pulse)
 	);
 
+   // Button debounce
+   button_debounce button_debounce_btnd (
+      .i_clk(clk),
+      .i_button(btnd),
+      .o_button_state(btnd_debounce)
+      );      
+
+   // Level to pulse
+	level_to_pulse lvl_to_pulse_btnd (
+		.i_clk(clk), 
+		.i_data(btnd_debounce), 
+		.o_pulse(btnd_pulse)
+	);
+   
    // Line drawing module
 	draw_lines#( 
       .P_X_COORD_W(11),
@@ -93,12 +107,14 @@ module draw_lines_top(
       ) lines (
 		.i_clk(clk), 
 		.i_reset(btnu_pulse), 
-		.i_x0(sw[0]), 
-		.i_x1(40*sw[3:0]), 
-		.i_y0(sw[4]), 
-		.i_y1(30*sw[7:4]), 
+		.i_x0(40*sw[3:0]), 
+		.i_x1(100),//40*sw[3:0]), 
+		.i_y0(30*sw[7:4]), 
+		.i_y1(100), 
 		.i_clear_buffer(btns_pulse), 
+      .i_load_fifo(btnd_pulse),
       .o_waiting(),
+      .o_fifo_full(),
 		.i_hcounter(vga_hcounter), 
 		.i_vcounter(vga_vcounter), 
 		.o_pixel_on(pixel_on)

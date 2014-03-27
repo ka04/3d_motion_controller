@@ -27,7 +27,9 @@ module draw_lines(
       input                    [P_Y_COORD_W-1:0] i_y0,
       input                    [P_Y_COORD_W-1:0] i_y1,
       input                                      i_clear_buffer,
+      input                                      i_load_fifo,
       output                                     o_waiting,
+      output                                     o_fifo_full,
       // VGA 
       input                    [P_X_COORD_W-1:0] i_hcounter,
       input                    [P_Y_COORD_W-1:0] i_vcounter,
@@ -64,8 +66,12 @@ module draw_lines(
     reg  [P_DATA_W-1:0] buffer_data;
     
     // Bresenham control signals
-    wire bres_waiting;
-    wire load_vals;
+    wire                   bres_waiting;
+    wire                   load_vals;
+    wire [P_X_COORD_W-1:0] fifo_x0;
+    wire [P_X_COORD_W-1:0] fifo_x1;
+    wire [P_Y_COORD_W-1:0] fifo_y0;
+    wire [P_Y_COORD_W-1:0] fifo_y1;
     
     // Bresenham coordinates
     wire     [P_X_COORD_W-1:0] x_val;
@@ -76,10 +82,59 @@ module draw_lines(
     
     // FIFO control signals
     wire fifo_empty;
-    assign fifo_empty = 1'b1; // place holder until FIFO is implemented
+    wire fifo_full;
+    //assign fifo_empty = 1'b1; // place holder until FIFO is implemented
+    assign o_fifo_full = fifo_full;
     
     // Generate output waiting status signal
     assign o_waiting  = (curr_state == STATE__WAITING) ? 1'b1 : 1'b0;
+
+    ////////////////////////
+    // Input buffer FIFOs //
+    ////////////////////////
+    fifo x0_in_buffer (
+		.i_clk(i_clk), 
+		.i_reset(i_reset), 
+		.i_data(i_x0), 
+		.i_read(load_vals), 
+		.i_write(i_load_fifo), 
+		.o_data(fifo_x0), 
+		.o_empty(fifo_empty), 
+		.o_full(fifo_full)
+	 );
+
+    fifo x1_in_buffer (
+		.i_clk(i_clk), 
+		.i_reset(i_reset), 
+		.i_data(i_x1), 
+		.i_read(load_vals), 
+		.i_write(i_load_fifo), 
+		.o_data(fifo_x1), 
+		.o_empty(), 
+		.o_full()
+	 );
+
+    fifo y0_in_buffer (
+		.i_clk(i_clk), 
+		.i_reset(i_reset), 
+		.i_data(i_y0), 
+		.i_read(load_vals), 
+		.i_write(i_load_fifo), 
+		.o_data(fifo_y0), 
+		.o_empty(), 
+		.o_full()
+	 );
+
+    fifo y1_in_buffer (
+		.i_clk(i_clk), 
+		.i_reset(i_reset), 
+		.i_data(i_y1), 
+		.i_read(load_vals), 
+		.i_write(i_load_fifo), 
+		.o_data(fifo_y1), 
+		.o_empty(), 
+		.o_full()
+	 );
     
     ///////////////////////////
     // Control state machine //
@@ -115,7 +170,7 @@ module draw_lines(
          STATE__DRAW : begin
             if (bres_waiting && fifo_empty) begin
                next_state = STATE__WAITING;
-            end else if (~fifo_empty) begin
+            end else if (~fifo_empty && bres_waiting) begin
                next_state = STATE__LOAD;
             end
          end
@@ -128,10 +183,10 @@ module draw_lines(
 	bresenham bres (
 		.i_clk(i_clk), 
 		.i_reset(i_reset), 
-		.i_x0(i_x0), 
-		.i_x1(i_x1), 
-		.i_y0(i_y0), 
-		.i_y1(i_y1), 
+		.i_x0(fifo_x0),//i_x0), 
+		.i_x1(fifo_x1),//i_x1), 
+		.i_y0(fifo_y0),//i_y0), 
+		.i_y1(fifo_y1),//i_y1), 
 		.i_load_vals(load_vals), 
       .o_x_val(x_val),
       .o_y_val(y_val),
