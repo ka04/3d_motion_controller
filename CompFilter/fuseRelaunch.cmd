@@ -1,0 +1,1 @@
+-intstyle "ise" -incremental -lib "unisims_ver" -lib "unimacro_ver" -lib "xilinxcorelib_ver" -lib "secureip" -o "C:/Users/YangTianyu/Desktop/EC551/CompFilter/TB_CF_isim_beh.exe" -prj "C:/Users/YangTianyu/Desktop/EC551/CompFilter/TB_CF_beh.prj" "work.TB_CF" "work.glbl" 

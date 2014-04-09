@@ -1,0 +1,36 @@
+Running: C:\Xilinx\14.6\ISE_DS\ISE\bin\nt64\unwrapped\fuse.exe -intstyle ise -incremental -lib unisims_ver -lib unimacro_ver -lib xilinxcorelib_ver -lib secureip -o C:/Users/YangTianyu/Desktop/EC551/CompFilter/TB_CF_isim_beh.exe -prj C:/Users/YangTianyu/Desktop/EC551/CompFilter/TB_CF_beh.prj work.TB_CF work.glbl 
+ISim P.68d (signature 0x7708f090)
+Number of CPUs detected in this system: 1
+Turning on mult-threading, number of parallel sub-compilation jobs: 0 
+Determining compilation order of HDL files
+Analyzing Verilog file "C:/Users/YangTianyu/Desktop/EC551/CompFilter/ipcore_dir/arctan.v" into library work
+Analyzing Verilog file "C:/Users/YangTianyu/Desktop/EC551/CompFilter/CF.v" into library work
+Analyzing Verilog file "C:/Users/YangTianyu/Desktop/EC551/CompFilter/TB_CF.v" into library work
+Analyzing Verilog file "C:/Xilinx/14.6/ISE_DS/ISE//verilog/src/glbl.v" into library work
+WARNING:HDLCompiler:687 - "C:/Xilinx/14.6/ISE_DS/ISE//verilog/src/glbl.v" Line 5: Illegal redeclaration of module <glbl>.
+Starting static elaboration
+Completed static elaboration
+Compiling module VCC
+Compiling module GND
+Compiling module FDE
+Compiling module FDR
+Compiling module FDRE
+Compiling module LUT3(INIT=8'b01001110)
+Compiling module LUT2(INIT=4'b01)
+Compiling module LUT4(INIT=16'b1111011010010000)
+Compiling module INV
+Compiling module SRLC16E
+Compiling module FD
+Compiling module MUXCY
+Compiling module XORCY
+Compiling module LUT1(INIT=2'b10)
+Compiling module arctan
+Compiling module CF
+Compiling module TB_CF
+Compiling module glbl
+Time Resolution for simulation is 1ps.
+WARNING:Simulator - Unable to copy libPortabilityNOSH.dll to the simulation executable directory: boost::filesystem::copy_file: 系统找不到指定的路径。, "isim\TB_CF_isim_beh.exe.sim\libPortability.dll".
+Compiled 25 Verilog Units
+Built simulation executable C:/Users/YangTianyu/Desktop/EC551/CompFilter/TB_CF_isim_beh.exe
+Fuse Memory Usage: 36352 KB
+Fuse CPU Usage: 515 ms
