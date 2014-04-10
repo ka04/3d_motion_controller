@@ -25,10 +25,8 @@ static const char *ng0 = "C:/Users/YangTianyu/Desktop/EC551/CompFilter/CF.v";
 static int ng1[] = {0, 0};
 static int ng2[] = {6, 0};
 static unsigned int ng3[] = {45U, 0U};
-static unsigned int ng4[] = {126U, 0U};
-static int ng5[] = {5, 0};
-static unsigned int ng6[] = {16U, 0U};
-static int ng7[] = {10, 0};
+static unsigned int ng4[] = {15625U, 0U};
+static unsigned int ng5[] = {984375U, 0U};
 
 
 
@@ -137,7 +135,6 @@ static void Always_55_1(char *t0)
     char t15[8];
     char t17[8];
     char t20[8];
-    char t22[8];
     char *t1;
     char *t2;
     char *t3;
@@ -155,7 +152,6 @@ static void Always_55_1(char *t0)
     char *t18;
     char *t19;
     char *t21;
-    char *t23;
 
 LAB0:    t1 = (t0 + 3736U);
     t2 = *((char **)t1);
@@ -206,21 +202,18 @@ LAB5:    xsi_set_current_line(56, ng0);
     memset(t4, 0, 8);
     xsi_vlog_unsigned_multiply(t4, 32, t2, 32, t6, 16);
     t7 = ((char*)((ng5)));
-    t14 = ((char*)((ng6)));
-    t16 = (t0 + 2248);
-    t18 = (t16 + 56U);
-    t19 = *((char **)t18);
+    t14 = (t0 + 2248);
+    t16 = (t14 + 56U);
+    t18 = *((char **)t16);
     memset(t15, 0, 8);
-    xsi_vlog_unsigned_multiply(t15, 32, t14, 32, t19, 16);
+    xsi_vlog_unsigned_multiply(t15, 32, t7, 32, t18, 16);
     memset(t17, 0, 8);
-    xsi_vlog_unsigned_add(t17, 32, t7, 32, t15, 32);
+    xsi_vlog_unsigned_add(t17, 32, t4, 32, t15, 32);
+    t19 = ((char*)((ng2)));
     memset(t20, 0, 8);
-    xsi_vlog_unsigned_rshift(t20, 32, t4, 32, t17, 32);
-    t21 = ((char*)((ng7)));
-    memset(t22, 0, 8);
-    xsi_vlog_unsigned_rshift(t22, 32, t20, 32, t21, 32);
-    t23 = (t0 + 2408);
-    xsi_vlogvar_assign_value(t23, t22, 0, 0, 32);
+    xsi_vlog_unsigned_rshift(t20, 32, t17, 32, t19, 32);
+    t21 = (t0 + 2408);
+    xsi_vlogvar_assign_value(t21, t20, 0, 0, 32);
     goto LAB2;
 
 }

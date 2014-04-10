@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <report-views version="2.0" >
  <header>
-  <DateModified>2014-04-08T22:56:43</DateModified>
+  <DateModified>2014-04-09T23:06:01</DateModified>
   <ModuleName>CF</ModuleName>
   <SummaryTimeStamp>Unknown</SummaryTimeStamp>
   <SavedFilePath>C:/Users/YangTianyu/Desktop/EC551/CompFilter/iseconfig/CF.xreport</SavedFilePath>
-  <ImplementationReportsDirectory>C:/Users/YangTianyu/Desktop/EC551/CompFilter</ImplementationReportsDirectory>
+  <ImplementationReportsDirectory>C:/Users/YangTianyu/Desktop/EC551/CompFilter\</ImplementationReportsDirectory>
   <DateInitialized>2014-04-08T22:56:43</DateInitialized>
   <EnableMessageFiltering>false</EnableMessageFiltering>
  </header>

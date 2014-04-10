@@ -54,7 +54,7 @@ arctan x_cc (
 //take from bit 13 but not 15 because arctan maximum=1.57<2, so x_out maximum is e.g. 001.......
 always @ (posedge clk) begin
 	x_temp = (x_out[13:8]*6'b101101)>>6;
-	x_final = (8'b01111110*x_gyro)>>7 + (8'b00010000*x_temp)>>10;//BUG here(x_final ==0): should shift 7, but when x_gyro is small, it effectively shifts out to zero.
+	x_final = ((16'h3D09*x_gyro) + (20'hF0537*x_temp))>>6;//BUG here(x_final ==0): should shift 7, but when x_gyro is small, it effectively shifts out to zero.
 																					 //how to get fractional numbers???
 	//gyro coe=0.984375=(0.1111110), acc coe=0.015625=0.0000010000
 end
